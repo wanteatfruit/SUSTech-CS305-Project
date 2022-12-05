@@ -1,20 +1,21 @@
-import pickle
-import argparse
-import hashlib
-import util.bt_utils as bt_utils
-import socket
-import struct
-import util.simsocket as simsocket
-import select
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
+import select
+import util.simsocket as simsocket
+import struct
+import socket
+import util.bt_utils as bt_utils
+import hashlib
+import argparse
+import pickle
 """
 This is CS305 project skeleton code.
 Please refer to the example files - example/dumpreceiver.py and example/dumpsender.py - to learn how to play with this skeleton.
 """
 
+MAX_PAYLOAD = 1024
+CHUNK_DATA_SIZE = 512*1024
 BUF_SIZE = 1400
 HEADER_LEN = struct.calcsize("HBBHHII")
 TEAM_NUM = 1
@@ -24,6 +25,8 @@ WHOHAS, IHAVE, GET, DATA, ACK, DENIED = (0, 1, 2, 3, 4, 5)
 output_file = None
 received_chunk = dict()
 downloading_chunkhash = ""
+sending_to_peer_num = 0 # how many peers its sending data to
+
 
 
 def process_download(sock:socket.socket, chunkfile, outputfile):
@@ -67,12 +70,18 @@ def process_inbound_udp(sock:socket.socket):
     # Receive pkt
     global sending_chunkhash
     global config
+    global sending_to_peer_num # how many peers its sending data to
     pkt, from_addr = sock.recvfrom(BUF_SIZE)
     Magic, Team, Type, hlen, plen, Seq, Ack = struct.unpack(
         "HBBHHII", pkt[:HEADER_LEN])
     data = pkt[HEADER_LEN:]
     
     if Type==WHOHAS:
+        # check if peer already reach max chunk
+        if sending_to_peer_num>=config.max_conn:\
+            # set ack and seq of denied to all 0
+            denied_pkt = struct.pack("HBBHHII", socket.htons(52305), TEAM_NUM, DENIED, socket.htons(HEADER_LEN), socket.htons(HEADER_LEN), socket.htonl(0), socket.htonl(0))
+            sock.sendto(denied_pkt,from_addr)
         # check if self has the chunk
         whohas_chunkhash = data[:20]
         chunkhash_str = bytes.hex(whohas_chunkhash)
@@ -82,7 +91,48 @@ def process_inbound_udp(sock:socket.socket):
             ihave_pkt = ihave_header+whohas_chunkhash
             sock.sendto(ihave_pkt, from_addr)
     elif Type==IHAVE:
-        pass
+        # see what chunk sender has
+        get_chunkhash = data[:20]
+        # send back GET
+        get_header = struct.pack("HBBHHII",socket.htons(52305), TEAM_NUM, GET, socket.htons(HEADER_LEN), socket.htons(HEADER_LEN+len(get_chunkhash)), socket.htonl(0), socket.htonl(0))
+        get_pkt = get_header+get_chunkhash
+        sock.sendto(get_pkt, from_addr)
+    elif Type==GET:
+        # sending chunk to new peer
+        sending_to_peer_num+=1
+        chunk_data = config.haschunks[sending_chunkhash][:MAX_PAYLOAD]
+        data_header = struct.pack("HBBHHII", socket.htons(52305),TEAM_NUM, DATA, socket.htons(HEADER_LEN), socket.htons(HEADER_LEN), socket.htonl(1), 0)
+        sock.sendto(data_header+chunk_data, from_addr)
+    elif Type==DATA:
+        received_chunk[downloading_chunkhash] +=data
+        '''
+        Set Ack in ack_pkt
+        '''
+        ack_pkt = struct.pack("HBBHHII", socket.htons(52305),TEAM_NUM,  ACK,socket.htons(HEADER_LEN), socket.htons(HEADER_LEN), 0, Seq) 
+        sock.sendto(ack_pkt, from_addr)
+        # see if finished
+        if len(received_chunk[downloading_chunkhash])==CHUNK_DATA_SIZE: # finished
+            with open(output_file,"wb") as wf:
+                pickle.dump(received_chunk, wf)
+            
+            config.haschunks[downloading_chunkhash] = received_chunk[downloading_chunkhash]
+            print(f"GOT {output_file}")
+    elif Type == ACK:
+        '''
+        Set Seq in data_pkt
+        '''
+        ack_num = socket.ntohl(Ack)
+        if ack_num*MAX_PAYLOAD >= CHUNK_DATA_SIZE:
+            # finished
+            print(f"finished sending {sending_chunkhash}")
+        else:
+            # split chunks into packets
+            left = ack_num*MAX_PAYLOAD
+            right = min((ack_num+1)*MAX_PAYLOAD, CHUNK_DATA_SIZE)
+            next_data = config.haschunks[sending_chunkhash][left:right]
+            data_header = struct.pack("HBBHHII", socket.htons(52305),TEAM_NUM,3,socket.htons(HEADER_LEN),socket.htons(HEADER_LEN+len(next_data)),socket.htonl(ack_num+1),0)
+            sock.sendto(data_header+next_data, from_addr)
+
 
 
 def process_user_input(sock):

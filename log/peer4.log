@@ -1,2 +1,3 @@
-2022-12-04 20:24:52,205 - PEER4_LOGGER - INFO - Start logging
-2022-12-04 20:24:52,205 - PEER4_LOGGER - INFO - Network simulator activated, running at ('127.0.0.1', 45165).
+2022-12-05 20:31:15,459 - PEER4_LOGGER - INFO - Start logging
+2022-12-05 20:31:15,460 - PEER4_LOGGER - INFO - Network simulator activated, running at ('127.0.0.1', 47219).
+2022-12-05 20:31:15,613 - PEER4_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
