@@ -294,14 +294,20 @@ def process_inbound_udp(sock:socket.socket):
         if len(received_chunk[downloading_id])==CHUNK_DATA_SIZE: # finished
             # finished downloading this chunkdata!
             # dump your received chunk to file in dict form using pickle
-            with open(output_file,"wb") as wf:
-                output_dict=dict()
-                output_dict[downloading_id]=received_chunk[downloading_id]
-                pickle.dump(output_dict, wf)
-            
             config.haschunks[downloading_id] = received_chunk[downloading_id]
-            print(f"GOT {output_file}")
             receiver_dict[identity_global].downloading_chunkhash.pop(0)
+
+            #只有当所有包都收到的时候，才打包为output_file
+            FINISH=True
+            for value in received_chunk.values():
+                if len(value)!=CHUNK_DATA_SIZE:
+                    FINISH=False
+                    break
+            if FINISH:
+                with open(output_file,"wb") as wf:
+                    pickle.dump(received_chunk, wf)
+                print(f"GOT {output_file}")
+
             if len(receiver_dict[identity_global].downloading_chunkhash)!=0:
                 #发送get包
                 get_chunkhash = bytes.fromhex(receiver_dict[identity_global].downloading_chunkhash[0])
