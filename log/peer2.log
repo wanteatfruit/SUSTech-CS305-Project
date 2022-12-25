@@ -1,192 +1,22 @@
-2022-12-05 20:31:15,459 - PEER2_LOGGER - INFO - Start logging
-2022-12-05 20:31:15,459 - PEER2_LOGGER - INFO - Network simulator activated, running at ('127.0.0.1', 47219).
-2022-12-05 20:31:15,513 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:15,513 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:15,865 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:15,865 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:15,967 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:15,967 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,069 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,069 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,171 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,171 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,273 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,273 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,375 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,375 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,477 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,477 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,579 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,579 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,681 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,681 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,783 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,783 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,885 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,885 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,987 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:16,987 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,089 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,089 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,191 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,191 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,293 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,293 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,395 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,395 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,497 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,497 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,599 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,599 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,700 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,701 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,803 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,803 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,905 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:17,905 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,007 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,007 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,109 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,109 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,211 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,211 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,313 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,313 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,415 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,415 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,517 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,517 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,618 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,619 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,721 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,721 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,822 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,822 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,924 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:18,925 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,026 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,026 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,128 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,128 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,230 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,230 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,332 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,332 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,434 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,434 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,536 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,536 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,639 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,639 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,741 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,741 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,843 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,843 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,944 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:19,944 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,046 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,046 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,148 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,148 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,250 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,250 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,352 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,352 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,454 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,454 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,556 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,556 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,658 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,658 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,760 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,760 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,862 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,862 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,964 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:20,964 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,066 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,066 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,167 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,168 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,269 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,269 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,371 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,371 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,473 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,473 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,576 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,576 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,679 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,679 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,781 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,781 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,883 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,883 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,985 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:21,985 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,088 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,088 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,190 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,190 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,293 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,293 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,397 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,397 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,499 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,499 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,601 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,601 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,704 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,704 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,806 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,806 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,908 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:22,908 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,010 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,010 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,112 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,112 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,214 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,214 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,316 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,317 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,419 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,419 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,521 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,521 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,622 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,622 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,724 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,724 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,826 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,826 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,928 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:23,928 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,029 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,030 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,131 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,131 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,233 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,233 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,335 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,335 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,437 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,437 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,539 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,539 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,641 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,641 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,743 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,743 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,844 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,844 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,946 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:24,946 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:25,048 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:25,048 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:25,150 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:25,150 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:25,252 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:25,252 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:25,354 - PEER2_LOGGER - DEBUG - Receiving a pkt from ('127.0.0.1', 48001) via spiffy
-2022-12-05 20:31:25,354 - PEER2_LOGGER - DEBUG - sending a pkt to ('127.0.0.1', 48001) via spiffy
+2022-12-25 21:10:41,063 -+- PEER2_LOGGER -+- INFO -+- Start logging
+2022-12-25 21:10:41,063 -+- PEER2_LOGGER -+- INFO -+- Network simulator activated, running at ('127.0.0.1', 31862).
+2022-12-25 21:10:41,346 -+- PEER2_LOGGER -+- DEBUG -+- Receiving a type0 pkt from ('127.0.0.1', 48001) via spiffy, seq0, ack0, pkt_len56
+2022-12-25 21:10:41,346 -+- PEER2_LOGGER -+- DEBUG -+- sending a type1 pkt to ('127.0.0.1', 48001) via spiffy, seq0, ack0, pkt_len36
+2022-12-25 21:10:41,548 -+- PEER2_LOGGER -+- DEBUG -+- Receiving a type2 pkt from ('127.0.0.1', 48001) via spiffy, seq0, ack0, pkt_len36
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq0, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq1, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq2, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq3, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq4, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq5, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq6, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq7, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq8, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq9, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq10, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq11, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq12, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq13, ack0, pkt_len16
+2022-12-25 21:10:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48001) via spiffy, seq14, ack0, pkt_len16
+2022-12-25 21:11:41,549 -+- PEER2_LOGGER -+- DEBUG -+- sending a type3 pkt to ('127.0.0.1', 48003) via spiffy, seq0, ack0, pkt_len16
+2022-12-25 21:11:56,363 -+- PEER2_LOGGER -+- INFO -+- socket closed
