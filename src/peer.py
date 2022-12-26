@@ -172,8 +172,8 @@ def process_inbound_udp(sock:socket.socket):
             chunk_state=0
             position=0
             for value in receiver_dict.values():
-                for i in range(len(value.downloading_list)):
-                    if get_chunkhash==value.downloading_list[i]:
+                for i in range(len(value.downloading_chunkhash)):
+                    if get_chunkhash==value.downloading_chunkhash[i]:
                         if i==0:
                             chunk_state=1
                         else:
