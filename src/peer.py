@@ -46,7 +46,7 @@ receiver_dict=dict()
 # https://github.com/orgs/SUSTech-CS305-Fall22/discussions/22
 
 class peer2peer: #与别的peer交互的时候需要用到
-    def __init__(self,N=15,base_number=0,time_enable=False):
+    def __init__(self,from_addr,N=15,base_number=0,time_enable=False):
         self.N=N #窗口长度
         self.base_number=base_number# queue的base number，即为当前的确认号
         self.queue=[]# 接收队列，长度为N，使用list模拟queue
@@ -55,6 +55,7 @@ class peer2peer: #与别的peer交互的时候需要用到
         # rtt估计，用于超时评估，仅当该节点为发送方的时候有值（只有发送方需要重传）,初始化为1秒超时
         self.eRTT=1
         self.dRTT=0
+        self.from_addr=from_addr
 
 class pkt_in_queue:#对于每个存在queue中的数据结构
     def __init__(self,packet,send_time,ack_number=0,retran_number=0,receive=False):
@@ -186,13 +187,13 @@ def process_inbound_udp(sock:socket.socket):
             if chunk_state==0:#决定请求这个
                 chunk_belong_to[get_chunkhash]=identity_global
                 if identity_global not in receiver_dict:
-                    receiver_dict[identity_global]=peer2peer(N=15,base_number=0,time_enable=False)
+                    receiver_dict[identity_global]=peer2peer(from_addr=from_addr,N=15,base_number=0,time_enable=False)
                 receiver_dict[identity_global].downloading_chunkhash.append(get_chunkhash)
             elif chunk_state==1:
                 pass
             elif chunk_state==2:
                 if identity_global not in receiver_dict:
-                    receiver_dict[identity_global]=peer2peer(N=15,base_number=0,time_enable=False)
+                    receiver_dict[identity_global]=peer2peer(from_addr=from_addr,N=15,base_number=0,time_enable=False)
                     receiver_dict[identity_global].downloading_chunkhash.append(get_chunkhash)
                 elif position>len(receiver_dict[identity_global].downloading_chunkhash):
                     receiver_dict[identity_global].downloading_chunkhash.append(get_chunkhash)
@@ -224,7 +225,7 @@ def process_inbound_udp(sock:socket.socket):
         #接收方应保证不会在不会对一个peer同时请求两个chunk
         assert identity_global not in sender_dict, '发送方在发送时受到对另一个chunk的GET'
 
-        sender_dict[identity_global]=peer2peer(N=15,base_number=0,time_enable=False)
+        sender_dict[identity_global]=peer2peer(from_addr=from_addr,N=15,base_number=0,time_enable=False)
 
         get_chunkhash = data[:20]
         sending_chunkhash = bytes.hex(get_chunkhash)
@@ -330,6 +331,7 @@ def process_inbound_udp(sock:socket.socket):
         ack_num = Ack
         if ack_num*MAX_PAYLOAD >= CHUNK_DATA_SIZE:#ack_num==512
             # finished
+            sending_chunkhash=sender_dict[identity_global].downloading_chunkhash[0]
             sender_dict.pop(identity_global)
             sending_to_peer_num-=1
             print(f"finished sending {sending_chunkhash}")
@@ -352,7 +354,7 @@ def process_inbound_udp(sock:socket.socket):
                 
                 for i in option:
                     for j in range(i[0]-sender_dict[identity_global].base_number,i[1]-sender_dict[identity_global].base_number):
-                        if j< len(sender_dict[identity_global].queue[j]):
+                        if j< len(sender_dict[identity_global].queue):
                             sender_dict[identity_global].queue[j].receive=True
 
                 #这里要加最多到
@@ -487,7 +489,7 @@ def peer_run(config):
                             if time.time()-value.timer[1]>time_limit:
                                 # 进行超时重传处理 
                                 # 重传队列头的包 同时重启计数器
-                                sock.sendto(value.queue[0].packet, (p[1], int(p[2])))
+                                sock.sendto(value.queue[0].packet, value.from_addr)
                                 value.queue[0].retran_number += 1
                                 value.timer=[True,time.time()]
 
