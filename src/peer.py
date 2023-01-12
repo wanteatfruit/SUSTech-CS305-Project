@@ -26,7 +26,7 @@ TEAM_NUM = 1
 MAGIC = 52035
 WHOHAS, IHAVE, GET, DATA, ACK, DENIED = (0, 1, 2, 3, 4, 5)
 ssthresh = 64
-winInfo = []
+winInfo = dict()
 
 #这个peer的信息
 output_file = None
@@ -275,7 +275,7 @@ def process_inbound_udp(sock:socket.socket):
         
         #启动计时器
         sender_dict[identity_global].timer=[True,time.time()]
-
+        winInfo[identity_global]=[]
 
     elif Type==DATA: #3 此时peer为接收方
     
@@ -372,6 +372,10 @@ def process_inbound_udp(sock:socket.socket):
             sender_dict.pop(identity_global)
             sending_to_peer_num-=1
             print(f"finished sending {sending_chunkhash}")
+
+
+            plot(self_identity=config.identity,opposite_identity=identity_global,sending_chunkhash=sending_chunkhash,winInfo=winInfo[identity_global])
+            winInfo.pop(identity_global)
         else:
             if ack_num>sender_dict[identity_global].base_number:
                 
@@ -400,7 +404,7 @@ def process_inbound_udp(sock:socket.socket):
                     if ack_num not in sender_dict[identity_global].ack_list:
                         sender_dict[identity_global].ack_list[ack_num] = 1
                         sender_dict[identity_global].N +=1 # 下面补齐
-                        winInfo.append((int(sender_dict[identity_global].N), time.time()))
+                        winInfo[identity_global].append((int(sender_dict[identity_global].N), time.time()))
                         # assert len(winInfo) != 0
                         # sender_dict[identity_global].queue.append(pkt_in_queue(packet=None,send_time=time.time(),ack_number=0,retran_number=0,receive=False))
                     else: #重复的 ack +1
@@ -413,7 +417,7 @@ def process_inbound_udp(sock:socket.socket):
                     if ack_num not in sender_dict[identity_global].ack_list:
                         sender_dict[identity_global].N = sender_dict[identity_global].N + 1/sender_dict[identity_global].N
                         sender_dict[identity_global].ack_list[ack_num] = 1
-                        winInfo.append((int(sender_dict[identity_global].N),time.time()))
+                        winInfo[identity_global].append((int(sender_dict[identity_global].N),time.time()))
                     else:
                         sender_dict[identity_global].ack_list[ack_num] +=1 
                 elif sender_dict[identity_global].control == 2:
@@ -425,7 +429,7 @@ def process_inbound_udp(sock:socket.socket):
                         sender_dict[identity_global].control = 1
                     else:
                         sender_dict[identity_global].N +=1 # 下面补齐
-                        winInfo.append((int(sender_dict[identity_global].N), time.time()))
+                        winInfo[identity_global].append((int(sender_dict[identity_global].N), time.time()))
                   
 
                 #这里要加最多到
@@ -456,7 +460,7 @@ def process_inbound_udp(sock:socket.socket):
                         
                         ssthresh = int(sender_dict[identity_global].N/2) 
                         sender_dict[identity_global].N = ssthresh + 3
-                        winInfo.append((int(sender_dict[identity_global].N),time.time()))
+                        winInfo[identity_global].append((int(sender_dict[identity_global].N),time.time()))
                         if int(sender_dict[identity_global].N) > 6 :  # 变化之后winsize会减少
                             queue = []
                             for i in sender_dict[identity_global].queue:
@@ -487,7 +491,8 @@ def process_inbound_udp(sock:socket.socket):
         #是否还需要再次向peerA发送whohas
         pass
                 
-            
+def plot(self_identity,opposite_identity,sending_chunkhash,winInfo):
+    pass            
 
 
 def decode_option(real_header_length,HEADER_LEN,pkt):
@@ -601,19 +606,19 @@ def peer_run(config):
                                 if value.control == 0:
                                     ssthresh = max(int(value.N/2),2)
                                     value.N = 1
-                                    winInfo.append((int(value.N),time.time()))
+                                    winInfo[key].append((int(value.N),time.time()))
                                     value.queue = [value.queue[0]]
                                 elif value.control == 1:
                                     ssthresh = max(int(value.N/2),2)
                                     value.N = 1
-                                    winInfo.append((int(value.N),time.time()))
+                                    winInfo[key].append((int(value.N),time.time()))
                                     value.queue = [value.queue[0]]
                                     value.control = 0
                                 else :
                                     # 快速恢复到慢启动
                                     ssthresh = max(int(value.N/2),2)
                                     value.N = 1
-                                    winInfo.append((int(value.N),time.time()))
+                                    winInfo[key].append((int(value.N),time.time()))
                                     value.queue = [value.queue[0]]
                                     value.control = 0
                                 sock.sendto(value.queue[0].packet, value.from_addr)

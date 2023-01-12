@@ -67,7 +67,7 @@ class CheckerSocket:
         to_addr = (s_head_lDestAddr, s_head_lDestPort)
         pkt = StdPkt(magic, team, pkt_type, header_len, pkt_len, seq, ack, read_pkt_byte, from_addr, to_addr)
 
-        self.__logger.debug(f"{from_addr} sends a type{pkt_type} pkt to {to_addr}, seq{seq}, ack{ack}")
+        # self.__logger.debug(f"{from_addr} sends a type{pkt_type} pkt to {to_addr}, seq{seq}, ack{ack}")
 
         return pkt
 
