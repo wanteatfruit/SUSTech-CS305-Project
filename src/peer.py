@@ -29,10 +29,13 @@ output_file = None
 sending_to_peer_num = 0 # how many peers its sending data to
 received_chunk = dict()#这个peer需要下载的chunk，key为hash,value为数据
 chunk_belong_to=dict()#这个chunk决定由谁下载，用于判断是否已经下载完成，key为hash，value为identify
+whohas_chunk=dict()#key为hash，value为identity的hash。表明都有谁有这个hash。用于crash处理
 
 # 用于通过ip和port查找identity
 # key:(ip,port) value:identity
 identity_dict=dict()
+
+identity_dict_reverse=dict()
 
 
 # 与别的peer交互的时候，该peer为发送方
@@ -111,10 +114,12 @@ def process_inbound_udp(sock:socket.socket):
     global sending_to_peer_num # how many peers its sending data to
     global received_chunk
     global chunk_belong_to
+    global whohas_chunk
 
     global identity_dict
+    global identity_dict_reverse
 
-    global identity_dict
+    global sender_dict
     global receiver_dict
 
     pkt, from_addr = sock.recvfrom(BUF_SIZE)
@@ -126,10 +131,10 @@ def process_inbound_udp(sock:socket.socket):
     
     if Type==WHOHAS: #0
         # check if peer already reach max chunk
-        if sending_to_peer_num>=config.max_conn:
-            # set ack and seq of denied to all 0
-            denied_pkt = struct.pack("!HBBHHII", 52305, TEAM_NUM, DENIED, HEADER_LEN, HEADER_LEN, 0,0)
-            sock.sendto(denied_pkt,from_addr)
+        # if sending_to_peer_num>=config.max_conn:
+        #     # set ack and seq of denied to all 0
+        #     denied_pkt = struct.pack("!HBBHHII", 52305, TEAM_NUM, DENIED, HEADER_LEN, HEADER_LEN, 0,0)
+        #     sock.sendto(denied_pkt,from_addr)
         # check if self has the chunk
         whohas_chunkhash_list=[data[i:i+20] for i in range(0,len(data),20)]
         chunkhash_str_list=[bytes.hex(_) for _ in whohas_chunkhash_list]
@@ -161,6 +166,21 @@ def process_inbound_udp(sock:socket.socket):
             状态2：看代码吧，我线下说，或者不懂也没关系
             状态3：pass
         '''
+
+        '''
+        #这个peer需要下载的chunk，key为hash,value为数据
+        received_chunk = dict()
+
+        #这个chunk决定由谁下载，用于判断是否已经下载完成，key为hash，value为identify
+        chunk_belong_to=dict()#这个chunk决定由谁下载，用于判断是否已经下载完成，key为hash，value为identify
+
+        # 需要发送/下载的chunkhash列表，里面存的是chunkhash。此时downloading_chunkhash[0]的chunk应该正在下载/发送
+        sender_dict/receiver_dict.downloading_chunkhash=[]
+
+        #key为hash，value为identity的hash。表明都有谁有这个hash。用于crash处理
+        whohas_chunk=dict()
+        '''
+        
         ihave_chunkhash_list=[data[i:i+20] for i in range(0,len(data),20)]
         chunkhash_str_list=[bytes.hex(_) for _ in ihave_chunkhash_list]
         #对于每个ihave包中的hash
@@ -170,6 +190,9 @@ def process_inbound_udp(sock:socket.socket):
             #状态1：这个chunk正在被下载
             #状态2：整个chunk还未下载，正在别人的队列中等待被下载
             #状态3：这个chunk已经下载完成
+            if get_chunkhash not in whohas_chunk:
+                whohas_chunk[get_chunkhash]=[]
+            whohas_chunk[get_chunkhash].append(identity_global)    
             chunk_state=0
             position=0
             for value in receiver_dict.values():
@@ -210,6 +233,7 @@ def process_inbound_udp(sock:socket.socket):
             get_header = struct.pack("!HBBHHII",52305, TEAM_NUM, GET, HEADER_LEN, HEADER_LEN+len(get_chunkhash), 0,0)
             get_pkt = get_header+get_chunkhash
             sock.sendto(get_pkt, from_addr)
+            receiver_dict[identity_global].timer=[True,time.time()]
 
             #初始化接收方的队列，此时接收方还没有收到任何一个包，所以packet信息全部初始化为None
             for i in range(receiver_dict[identity_global].N):
@@ -247,83 +271,87 @@ def process_inbound_udp(sock:socket.socket):
     elif Type==DATA: #3 此时peer为接收方
     
         #接收方
-        if Seq==receiver_dict[identity_global].base_number:
-            # 移动窗口，把信息发送给received_chunk
-            # 返回新的ack值，同时设置option
-            receiver_dict[identity_global].queue[0].packet=pkt
-            while receiver_dict[identity_global].queue[0].packet!=None:
-                receiver_dict[identity_global].base_number+=1
-                received_chunk[receiver_dict[identity_global].downloading_chunkhash[0]]+=receiver_dict[identity_global].queue[0].packet[HEADER_LEN:]
-                receiver_dict[identity_global].queue.pop(0)
-                receiver_dict[identity_global].queue.append(pkt_in_queue(packet=None,send_time=time.time(),ack_number=0,retran_number=0,receive=False))
-                    
-        elif Seq>receiver_dict[identity_global].base_number and Seq<receiver_dict[identity_global].base_number+receiver_dict[identity_global].N:
-            # 返回一个basenumber的ack，同时设置option
-            #先要把后面的包存下来
-            receiver_dict[identity_global].queue[Seq-receiver_dict[identity_global].base_number].packet=pkt
-            receiver_dict[identity_global].queue[Seq-receiver_dict[identity_global].base_number].receive=True
-
-        
-        ack_value=receiver_dict[identity_global].base_number
-
-        option=encode_option(receiver_dict[identity_global].queue)
-        option=option[:4]
-        for i in option:
-            i[0]+=receiver_dict[identity_global].base_number
-            i[1]+=receiver_dict[identity_global].base_number
-        #构建传出的ack包
-        if len(option)==0:
-            ack_pkt = struct.pack("!HBBHHII", 52305,TEAM_NUM,  ACK,HEADER_LEN, HEADER_LEN, 0, ack_value) 
-            sock.sendto(ack_pkt, from_addr)
-        elif len(option)==1:
-                
-            ack_pkt = struct.pack("!HBBHHIIHH", 52305,TEAM_NUM,  ACK,struct.calcsize("HBBHHIIHH"), struct.calcsize("HBBHHIIHH"), 0, ack_value,option[0][0],option[0][1]) 
-            sock.sendto(ack_pkt, from_addr)
-        elif len(option)==2:
-            ack_pkt = struct.pack("!HBBHHIIHHHH", 52305,TEAM_NUM,  ACK,struct.calcsize("HBBHHIIHHHH"), struct.calcsize("HBBHHIIHHHH"), 0, ack_value,option[0][0],option[0][1],option[1][0],option[1][1]) 
-            sock.sendto(ack_pkt, from_addr)
-        elif len(option)==3:
-            ack_pkt = struct.pack("!HBBHHIIHHHHHH", 52305,TEAM_NUM,  ACK,struct.calcsize("HBBHHIIHHHHHH"), struct.calcsize("HBBHHIIHHHHHH"), 0, ack_value,option[0][0],option[0][1],option[1][0],option[1][1],option[2][0],option[2][1]) 
-            sock.sendto(ack_pkt, from_addr)
-        elif len(option)==4:
-            ack_pkt = struct.pack("!HBBHHIIHHHHHHHH", 52305,TEAM_NUM,  ACK,struct.calcsize("HBBHHIIHHHHHHHH"), struct.calcsize("HBBHHIIHHHHHHHH"), 0, ack_value,option[0][0],option[0][1],option[1][0],option[1][1],option[2][0],option[2][1],option[3][0],option[3][1]) 
-            sock.sendto(ack_pkt, from_addr)
-
-        #当收到最后一个data的时候，需要重新GET，或者清除receiver_dict()
-        # see if finished
-        downloading_id=receiver_dict[identity_global].downloading_chunkhash[0]
-        if len(received_chunk[downloading_id])==CHUNK_DATA_SIZE: # finished
-            # finished downloading this chunkdata!
-            # dump your received chunk to file in dict form using pickle
-            config.haschunks[downloading_id] = received_chunk[downloading_id]
-            receiver_dict[identity_global].downloading_chunkhash.pop(0)
-
-            #只有当所有包都收到的时候，才打包为output_file
-            FINISH=True
-            for value in received_chunk.values():
-                if len(value)!=CHUNK_DATA_SIZE:
-                    FINISH=False
-                    break
-            if FINISH:
-                with open(output_file,"wb") as wf:
-                    pickle.dump(received_chunk, wf)
-                print(f"GOT {output_file}")
-
-            if len(receiver_dict[identity_global].downloading_chunkhash)!=0:
-                #发送get包
-                get_chunkhash = bytes.fromhex(receiver_dict[identity_global].downloading_chunkhash[0])
-                # send back GET
-                get_header = struct.pack("!HBBHHII",52305, TEAM_NUM, GET, HEADER_LEN, HEADER_LEN+len(get_chunkhash), 0,0)
-                get_pkt = get_header+get_chunkhash
-                sock.sendto(get_pkt, from_addr)
-
-                receiver_dict[identity_global].base_number=0
-                receiver_dict[identity_global].queue.clear()
-                #初始化接收方的队列
-                for i in range(receiver_dict[identity_global].N):
+        if identity_global not in receiver_dict:
+            pass
+        else :
+            receiver_dict[identity_global].timer=[True,time.time()]
+            if Seq==receiver_dict[identity_global].base_number:
+                # 移动窗口，把信息发送给received_chunk
+                # 返回新的ack值，同时设置option
+                receiver_dict[identity_global].queue[0].packet=pkt
+                while receiver_dict[identity_global].queue[0].packet!=None:
+                    receiver_dict[identity_global].base_number+=1
+                    received_chunk[receiver_dict[identity_global].downloading_chunkhash[0]]+=receiver_dict[identity_global].queue[0].packet[HEADER_LEN:]
+                    receiver_dict[identity_global].queue.pop(0)
                     receiver_dict[identity_global].queue.append(pkt_in_queue(packet=None,send_time=time.time(),ack_number=0,retran_number=0,receive=False))
-            else:
-                receiver_dict.pop(identity_global)
+                        
+            elif Seq>receiver_dict[identity_global].base_number and Seq<receiver_dict[identity_global].base_number+receiver_dict[identity_global].N:
+                # 返回一个basenumber的ack，同时设置option
+                #先要把后面的包存下来
+                receiver_dict[identity_global].queue[Seq-receiver_dict[identity_global].base_number].packet=pkt
+                receiver_dict[identity_global].queue[Seq-receiver_dict[identity_global].base_number].receive=True
+
+            
+            ack_value=receiver_dict[identity_global].base_number
+
+            option=encode_option(receiver_dict[identity_global].queue)
+            option=option[:4]
+            for i in option:
+                i[0]+=receiver_dict[identity_global].base_number
+                i[1]+=receiver_dict[identity_global].base_number
+            #构建传出的ack包
+            if len(option)==0:
+                ack_pkt = struct.pack("!HBBHHII", 52305,TEAM_NUM,  ACK,HEADER_LEN, HEADER_LEN, 0, ack_value) 
+                sock.sendto(ack_pkt, from_addr)
+            elif len(option)==1:
+                    
+                ack_pkt = struct.pack("!HBBHHIIHH", 52305,TEAM_NUM,  ACK,struct.calcsize("HBBHHIIHH"), struct.calcsize("HBBHHIIHH"), 0, ack_value,option[0][0],option[0][1]) 
+                sock.sendto(ack_pkt, from_addr)
+            elif len(option)==2:
+                ack_pkt = struct.pack("!HBBHHIIHHHH", 52305,TEAM_NUM,  ACK,struct.calcsize("HBBHHIIHHHH"), struct.calcsize("HBBHHIIHHHH"), 0, ack_value,option[0][0],option[0][1],option[1][0],option[1][1]) 
+                sock.sendto(ack_pkt, from_addr)
+            elif len(option)==3:
+                ack_pkt = struct.pack("!HBBHHIIHHHHHH", 52305,TEAM_NUM,  ACK,struct.calcsize("HBBHHIIHHHHHH"), struct.calcsize("HBBHHIIHHHHHH"), 0, ack_value,option[0][0],option[0][1],option[1][0],option[1][1],option[2][0],option[2][1]) 
+                sock.sendto(ack_pkt, from_addr)
+            elif len(option)==4:
+                ack_pkt = struct.pack("!HBBHHIIHHHHHHHH", 52305,TEAM_NUM,  ACK,struct.calcsize("HBBHHIIHHHHHHHH"), struct.calcsize("HBBHHIIHHHHHHHH"), 0, ack_value,option[0][0],option[0][1],option[1][0],option[1][1],option[2][0],option[2][1],option[3][0],option[3][1]) 
+                sock.sendto(ack_pkt, from_addr)
+
+            #当收到最后一个data的时候，需要重新GET，或者清除receiver_dict()
+            # see if finished
+            downloading_id=receiver_dict[identity_global].downloading_chunkhash[0]
+            if len(received_chunk[downloading_id])==CHUNK_DATA_SIZE: # finished
+                # finished downloading this chunkdata!
+                # dump your received chunk to file in dict form using pickle
+                config.haschunks[downloading_id] = received_chunk[downloading_id]
+                receiver_dict[identity_global].downloading_chunkhash.pop(0)
+
+                #只有当所有包都收到的时候，才打包为output_file
+                FINISH=True
+                for value in received_chunk.values():
+                    if len(value)!=CHUNK_DATA_SIZE:
+                        FINISH=False
+                        break
+                if FINISH:
+                    with open(output_file,"wb") as wf:
+                        pickle.dump(received_chunk, wf)
+                    print(f"GOT {output_file}")
+
+                if len(receiver_dict[identity_global].downloading_chunkhash)!=0:
+                    #发送get包
+                    get_chunkhash = bytes.fromhex(receiver_dict[identity_global].downloading_chunkhash[0])
+                    # send back GET
+                    get_header = struct.pack("!HBBHHII",52305, TEAM_NUM, GET, HEADER_LEN, HEADER_LEN+len(get_chunkhash), 0,0)
+                    get_pkt = get_header+get_chunkhash
+                    sock.sendto(get_pkt, from_addr)
+
+                    receiver_dict[identity_global].base_number=0
+                    receiver_dict[identity_global].queue.clear()
+                    #初始化接收方的队列
+                    for i in range(receiver_dict[identity_global].N):
+                        receiver_dict[identity_global].queue.append(pkt_in_queue(packet=None,send_time=time.time(),ack_number=0,retran_number=0,receive=False))
+                else:
+                    receiver_dict.pop(identity_global)
 
 
     elif Type == ACK: #4 此时peer为发送方
@@ -450,7 +478,11 @@ def process_user_input(sock):
 def peer_run(config):
 
     global sender_dict
+    global receiver_dict
+    global whohas_chunk
+    global chunk_belong_to
     global identity_dict
+    global identity_dict_reverse
 
     #初始化identity_dict
     for p in config.peers:
@@ -461,9 +493,13 @@ def peer_run(config):
             # queue[p[0]]=[]
             # eRTT[p[0]]=1
             # downloading_chunkhash[p[0]]=[]
+    identity_dict_reverse = {v:k for k,v in identity_dict.items()}
+
 
     addr = (config.ip, config.port)
     sock = simsocket.SimSocket(config.identity, addr, verbose=config.verbose)
+
+    crash_peer_list=[]
 
     try:
         while True:
@@ -492,6 +528,57 @@ def peer_run(config):
                                 sock.sendto(value.queue[0].packet, value.from_addr)
                                 value.queue[0].retran_number += 1
                                 value.timer=[True,time.time()]
+
+                pop_list=[]
+                for key in list(receiver_dict.keys()):
+                # for key,value in receiver_dict.items():#value是peer2peer
+                    if key!=config.identity:#应该不会出现等于的情况
+                        if receiver_dict[key].timer[0]==True:
+
+                            time_limit=15
+                            if time.time()-receiver_dict[key].timer[1]>time_limit:
+                                crash_peer_list.append(key)
+                                # 超时
+                                # 应该直接舍弃这个节点
+                                # 遍历这个节点downloading_chunkhash中所有hash
+                                    # 找一个拥有这个hash的其他节点
+                                    # 更改chunk_belong_to
+                                    # 更改新请求的peer的receiver_dict.downloading_chunkhash
+                                    # 看是否要重新发送get
+                                # 删除掉这个peer2peer
+
+                                for chunkhash in receiver_dict[key].downloading_chunkhash:
+                                    received_chunk[chunkhash]=bytes()
+                                    new_peer=-1;#新选择的节点
+                                    new_len=1e7
+                                    #遍历所有有这个chunk的peer
+                                    for has_chunk_peer in whohas_chunk[chunkhash]:
+                                        if has_chunk_peer not in receiver_dict and has_chunk_peer not in crash_peer_list:
+                                            new_peer=has_chunk_peer
+                                            break
+                                        elif len(receiver_dict[has_chunk_peer].downloading_chunkhash)<new_len and has_chunk_peer not in crash_peer_list:
+                                            new_peer=has_chunk_peer
+                                            new_len=len(receiver_dict[has_chunk_peer].downloading_chunkhash)
+                                    assert new_peer!=-1, '没有另一个节点拥有该chunk'
+                                    chunk_belong_to[chunkhash]=new_peer
+                                    if new_peer not in receiver_dict:
+                                        receiver_dict[new_peer]=peer2peer(from_addr=identity_dict_reverse[new_peer],N=15,base_number=0,time_enable=False)
+                                    receiver_dict[new_peer].downloading_chunkhash.append(chunkhash)
+                                    #发送get
+                                    if len(receiver_dict[new_peer].downloading_chunkhash)==1:
+                                        get_chunkhash = bytes.fromhex(receiver_dict[new_peer].downloading_chunkhash[0])
+                                        get_header = struct.pack("!HBBHHII",52305, TEAM_NUM, GET, HEADER_LEN, HEADER_LEN+len(get_chunkhash), 0,0)
+                                        get_pkt = get_header+get_chunkhash
+                                        sock.sendto(get_pkt, receiver_dict[new_peer].from_addr)
+                                        receiver_dict[new_peer].timer=[True,time.time()]
+                                        for i in range(receiver_dict[new_peer].N):
+                                            receiver_dict[new_peer].queue.append(pkt_in_queue(packet=None,send_time=time.time(),ack_number=0,retran_number=0,receive=False))
+
+                                
+                                pop_list.append(key)
+                
+                for key in pop_list:
+                    receiver_dict.pop(key)
 
     except KeyboardInterrupt:
         pass
