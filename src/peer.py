@@ -10,6 +10,8 @@ import hashlib
 import argparse
 import pickle
 import time
+import matplotlib.pyplot as plt
+import logging
 """
 This is CS305 project skeleton code.
 Please refer to the example files - example/dumpreceiver.py and example/dumpsender.py - to learn how to play with this skeleton.
@@ -23,6 +25,8 @@ HEADER_LEN = struct.calcsize("HBBHHII")
 TEAM_NUM = 1
 MAGIC = 52035
 WHOHAS, IHAVE, GET, DATA, ACK, DENIED = (0, 1, 2, 3, 4, 5)
+ssthresh = 64
+winInfo = []
 
 #这个peer的信息
 output_file = None
@@ -49,7 +53,7 @@ receiver_dict=dict()
 # https://github.com/orgs/SUSTech-CS305-Fall22/discussions/22
 
 class peer2peer: #与别的peer交互的时候需要用到
-    def __init__(self,from_addr,N=15,base_number=0,time_enable=False):
+    def __init__(self,from_addr,N=1,base_number=0,time_enable=False):
         self.N=N #窗口长度
         self.base_number=base_number# queue的base number，即为当前的确认号
         self.queue=[]# 接收队列，长度为N，使用list模拟queue
@@ -59,6 +63,8 @@ class peer2peer: #与别的peer交互的时候需要用到
         self.eRTT=1
         self.dRTT=0
         self.from_addr=from_addr
+        self.control = 0 # 拥塞控制模式 表明这个peer作为发送方时处于哪个状态
+        self.ack_list = dict()  # peer作为发送方时，存储收到的ack信息
 
 class pkt_in_queue:#对于每个存在queue中的数据结构
     def __init__(self,packet,send_time,ack_number=0,retran_number=0,receive=False):
@@ -121,6 +127,9 @@ def process_inbound_udp(sock:socket.socket):
 
     global sender_dict
     global receiver_dict
+
+    global ssthresh
+    global winInfo
 
     pkt, from_addr = sock.recvfrom(BUF_SIZE)
     Magic, Team, Type, hlen, plen, Seq, Ack = struct.unpack(
@@ -210,13 +219,13 @@ def process_inbound_udp(sock:socket.socket):
             if chunk_state==0:#决定请求这个
                 chunk_belong_to[get_chunkhash]=identity_global
                 if identity_global not in receiver_dict:
-                    receiver_dict[identity_global]=peer2peer(from_addr=from_addr,N=15,base_number=0,time_enable=False)
+                    receiver_dict[identity_global]=peer2peer(from_addr=from_addr,N=512,base_number=0,time_enable=False)
                 receiver_dict[identity_global].downloading_chunkhash.append(get_chunkhash)
             elif chunk_state==1:
                 pass
             elif chunk_state==2:
                 if identity_global not in receiver_dict:
-                    receiver_dict[identity_global]=peer2peer(from_addr=from_addr,N=15,base_number=0,time_enable=False)
+                    receiver_dict[identity_global]=peer2peer(from_addr=from_addr,N=512,base_number=0,time_enable=False)
                     receiver_dict[identity_global].downloading_chunkhash.append(get_chunkhash)
                 elif position>len(receiver_dict[identity_global].downloading_chunkhash):
                     receiver_dict[identity_global].downloading_chunkhash.append(get_chunkhash)
@@ -236,7 +245,7 @@ def process_inbound_udp(sock:socket.socket):
             receiver_dict[identity_global].timer=[True,time.time()]
 
             #初始化接收方的队列，此时接收方还没有收到任何一个包，所以packet信息全部初始化为None
-            for i in range(receiver_dict[identity_global].N):
+            for i in range(int(receiver_dict[identity_global].N)):
                 receiver_dict[identity_global].queue.append(pkt_in_queue(packet=None,send_time=time.time(),ack_number=0,retran_number=0,receive=False))
 
     elif Type==GET: #2, 此时该peer为发送方
@@ -249,7 +258,7 @@ def process_inbound_udp(sock:socket.socket):
         #接收方应保证不会在不会对一个peer同时请求两个chunk
         assert identity_global not in sender_dict, '发送方在发送时受到对另一个chunk的GET'
 
-        sender_dict[identity_global]=peer2peer(from_addr=from_addr,N=15,base_number=0,time_enable=False)
+        sender_dict[identity_global]=peer2peer(from_addr=from_addr,N=1,base_number=0,time_enable=False)
 
         get_chunkhash = data[:20]
         sending_chunkhash = bytes.hex(get_chunkhash)
@@ -257,7 +266,7 @@ def process_inbound_udp(sock:socket.socket):
 
         
         #把包加到队列中
-        for i in range(sender_dict[identity_global].N):
+        for i in range(int(sender_dict[identity_global].N)):
             chunk_data = config.haschunks[sending_chunkhash][i*MAX_PAYLOAD:(i+1)*MAX_PAYLOAD]
             data_header = struct.pack("!HBBHHII", 52305,TEAM_NUM, DATA, HEADER_LEN, HEADER_LEN, i, 0)#第一个包的seq值从0开始
             data_pkt=data_header+chunk_data
@@ -285,7 +294,7 @@ def process_inbound_udp(sock:socket.socket):
                     receiver_dict[identity_global].queue.pop(0)
                     receiver_dict[identity_global].queue.append(pkt_in_queue(packet=None,send_time=time.time(),ack_number=0,retran_number=0,receive=False))
                         
-            elif Seq>receiver_dict[identity_global].base_number and Seq<receiver_dict[identity_global].base_number+receiver_dict[identity_global].N:
+            elif Seq>receiver_dict[identity_global].base_number and Seq<receiver_dict[identity_global].base_number+int(receiver_dict[identity_global].N):
                 # 返回一个basenumber的ack，同时设置option
                 #先要把后面的包存下来
                 receiver_dict[identity_global].queue[Seq-receiver_dict[identity_global].base_number].packet=pkt
@@ -348,7 +357,7 @@ def process_inbound_udp(sock:socket.socket):
                     receiver_dict[identity_global].base_number=0
                     receiver_dict[identity_global].queue.clear()
                     #初始化接收方的队列
-                    for i in range(receiver_dict[identity_global].N):
+                    for i in range(int(receiver_dict[identity_global].N)):
                         receiver_dict[identity_global].queue.append(pkt_in_queue(packet=None,send_time=time.time(),ack_number=0,retran_number=0,receive=False))
                 else:
                     receiver_dict.pop(identity_global)
@@ -357,7 +366,7 @@ def process_inbound_udp(sock:socket.socket):
     elif Type == ACK: #4 此时peer为发送方
 
         ack_num = Ack
-        if ack_num*MAX_PAYLOAD >= CHUNK_DATA_SIZE:#ack_num==512
+        if ack_num*MAX_PAYLOAD >= CHUNK_DATA_SIZE:#ack_num==512 发送完毕 这里画图
             # finished
             sending_chunkhash=sender_dict[identity_global].downloading_chunkhash[0]
             sender_dict.pop(identity_global)
@@ -378,15 +387,49 @@ def process_inbound_udp(sock:socket.socket):
 
                 while sender_dict[identity_global].base_number!=ack_num:
                     sender_dict[identity_global].base_number+=1
-                    sender_dict[identity_global].queue.pop(0)
+                    if len(sender_dict[identity_global].queue)!=0:
+                        sender_dict[identity_global].queue.pop(0)
                 
                 for i in option:
                     for j in range(i[0]-sender_dict[identity_global].base_number,i[1]-sender_dict[identity_global].base_number):
                         if j< len(sender_dict[identity_global].queue):
                             sender_dict[identity_global].queue[j].receive=True
 
+                if sender_dict[identity_global].control == 0: # 慢启动
+                        #收到了该ACK并且没有进行重传，需要扩大发送方的windowsize 根据是否是new ack进行讨论                     
+                    if ack_num not in sender_dict[identity_global].ack_list:
+                        sender_dict[identity_global].ack_list[ack_num] = 1
+                        sender_dict[identity_global].N +=1 # 下面补齐
+                        winInfo.append((int(sender_dict[identity_global].N), time.time()))
+                        # assert len(winInfo) != 0
+                        # sender_dict[identity_global].queue.append(pkt_in_queue(packet=None,send_time=time.time(),ack_number=0,retran_number=0,receive=False))
+                    else: #重复的 ack +1
+                        sender_dict[identity_global].ack_list[ack_num] +=1
+                    
+                    if int(sender_dict[identity_global].N) >= ssthresh:#进入拥塞避免模式
+                        sender_dict[identity_global].control = 1
+                        
+                elif sender_dict[identity_global].control == 1:
+                    if ack_num not in sender_dict[identity_global].ack_list:
+                        sender_dict[identity_global].N = sender_dict[identity_global].N + 1/sender_dict[identity_global].N
+                        sender_dict[identity_global].ack_list[ack_num] = 1
+                        winInfo.append((int(sender_dict[identity_global].N),time.time()))
+                    else:
+                        sender_dict[identity_global].ack_list[ack_num] +=1 
+                elif sender_dict[identity_global].control == 2:
+                    if ack_num not in sender_dict[identity_global].ack_list:
+                        # new ack 回到拥塞避免
+                        # 清零dupACK
+                        # if len(sender_dict[identity_global].queue)
+                        # sender_dict[identity_global].queue[0].ack_number = 0
+                        sender_dict[identity_global].control = 1
+                    else:
+                        sender_dict[identity_global].N +=1 # 下面补齐
+                        winInfo.append((int(sender_dict[identity_global].N), time.time()))
+                  
+
                 #这里要加最多到
-                while sender_dict[identity_global].base_number+len(sender_dict[identity_global].queue)<512 and len(sender_dict[identity_global].queue)<sender_dict[identity_global].N:
+                while sender_dict[identity_global].base_number+len(sender_dict[identity_global].queue)<512 and len(sender_dict[identity_global].queue)<int(sender_dict[identity_global].N):
                     sending_chunkhash=sender_dict[identity_global].downloading_chunkhash[0]
                     left=sender_dict[identity_global].base_number+len(sender_dict[identity_global].queue)
                     right=left+1
@@ -403,9 +446,36 @@ def process_inbound_udp(sock:socket.socket):
                 #如果快速重传，那么重启计时器
                 for i in option:
                     for j in range(i[0]-sender_dict[identity_global].base_number,i[1]-sender_dict[identity_global].base_number):
-                        sender_dict[identity_global].queue[j].receive=True
+                        if j< len(sender_dict[identity_global].queue):
+                            sender_dict[identity_global].queue[j].receive=True
                 sender_dict[identity_global].queue[0].ack_number+=1
                 if sender_dict[identity_global].queue[0].ack_number==3:
+                    # 快速重传 同时从拥塞避免到慢启动
+                    if sender_dict[identity_global].control == 0 or sender_dict[identity_global].control == 1:
+                        sender_dict[identity_global].control = 2 # 慢启动到快速恢复
+                        
+                        ssthresh = int(sender_dict[identity_global].N/2) 
+                        sender_dict[identity_global].N = ssthresh + 3
+                        winInfo.append((int(sender_dict[identity_global].N),time.time()))
+                        if int(sender_dict[identity_global].N) > 6 :  # 变化之后winsize会减少
+                            queue = []
+                            for i in sender_dict[identity_global].queue:
+                                queue.append(i)
+                            sender_dict[identity_global].queue = queue.copy()
+                        else:
+                              # 变化之后winsize会增加
+                            # 补全
+                            while sender_dict[identity_global].base_number+len(sender_dict[identity_global].queue)<512 and len(sender_dict[identity_global].queue)<int(sender_dict[identity_global].N):
+                                sending_chunkhash=sender_dict[identity_global].downloading_chunkhash[0]
+                                left=sender_dict[identity_global].base_number+len(sender_dict[identity_global].queue)
+                                right=left+1
+                                chunk_data = config.haschunks[sending_chunkhash][left*MAX_PAYLOAD:right*MAX_PAYLOAD]
+                                data_header = struct.pack("!HBBHHII", 52305,TEAM_NUM, DATA, HEADER_LEN, HEADER_LEN, left, 0)#第一个包的seq值从0开始
+                                data_pkt=data_header+chunk_data
+                                sender_dict[identity_global].queue.append(pkt_in_queue(packet=data_pkt,send_time=time.time(),ack_number=0,retran_number=0,receive=False))
+                                sock.sendto(data_pkt, from_addr)
+                    else:
+                        pass
                     sender_dict[identity_global].queue[0].retran_number += 1
                     sock.sendto(sender_dict[identity_global].queue[0].packet, from_addr)
                     sender_dict[identity_global].timer=[True,time.time()]
@@ -484,6 +554,9 @@ def peer_run(config):
     global identity_dict
     global identity_dict_reverse
 
+    global ssthresh
+    global winInfo
+
     #初始化identity_dict
     for p in config.peers:
         if int(p[0]) != config.identity:
@@ -525,6 +598,24 @@ def peer_run(config):
                             if time.time()-value.timer[1]>time_limit:
                                 # 进行超时重传处理 
                                 # 重传队列头的包 同时重启计数器
+                                if value.control == 0:
+                                    ssthresh = max(int(value.N/2),2)
+                                    value.N = 1
+                                    winInfo.append((int(value.N),time.time()))
+                                    value.queue = [value.queue[0]]
+                                elif value.control == 1:
+                                    ssthresh = max(int(value.N/2),2)
+                                    value.N = 1
+                                    winInfo.append((int(value.N),time.time()))
+                                    value.queue = [value.queue[0]]
+                                    value.control = 0
+                                else :
+                                    # 快速恢复到慢启动
+                                    ssthresh = max(int(value.N/2),2)
+                                    value.N = 1
+                                    winInfo.append((int(value.N),time.time()))
+                                    value.queue = [value.queue[0]]
+                                    value.control = 0
                                 sock.sendto(value.queue[0].packet, value.from_addr)
                                 value.queue[0].retran_number += 1
                                 value.timer=[True,time.time()]
